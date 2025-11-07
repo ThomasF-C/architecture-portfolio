@@ -1,0 +1,55 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #000;
+  color: #EEE;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+#viewer {
+  position: fixed;
+  inset: 0;
+  background: #000;
+}
+
+/* Barre supérieure (titre) */
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 18px 24px;
+  text-align: center;
+  z-index: 30;
+  transition: opacity .6s;
+  background: rgba(0,0,0,0.2);
+}
+
+#topbar.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#topbar h1 {
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* Barre inférieure */
+#bottombar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 18px;
+  z-index: 30;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+#bottombar .right {
+  opacity: 0.6;
+}
