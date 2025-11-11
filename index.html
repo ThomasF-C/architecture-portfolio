@@ -1,66 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>PORTFOLIO D'ARCHITECTURE</title>
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Police Ubuntu -->
+  <!-- Police Ubuntu depuis Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap" rel="stylesheet">
 
-  <!-- CSS principal (si tu as style.css, il est chargé aussi) -->
+  <!-- CSS externe (si tu as d'autres règles) -->
   <link rel="stylesheet" href="style.css">
 
-  <!--
-    Styles spécifiques à cette page (garde-les ici pour faciliter les tests).
-    Les commentaires dans le CSS expliquent les choix.
-  -->
   <style>
     /* ===========================
        STYLE GLOBAL
        =========================== */
-    :root {
-      --viewer-height: 88vh; /* hauteur utilisée pour la zone principale */
-    }
-
-    html,body {
-      height: 100%;
-    }
-
     body {
-      margin: 0;
-      background: #000;
-      color: #fff;
+      background-color: black;
+      color: white;
       font-family: 'Ubuntu', sans-serif;
       text-align: center;
-      overflow: hidden; /* le layout est en full screen */
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
     }
 
     h1 {
       margin: 20px 0;
-      font-size: 2rem;
+      font-size: 2em;
       opacity: 0.3;
-      transition: opacity .8s ease;
+      transition: opacity 1s ease;
     }
+
     h1:hover { opacity: 1; }
 
     /* ===========================
-       OpenSeadragon viewers (les "pages" zoomables)
+       VIEWERS (OpenSeadragon)
        =========================== */
     .viewer {
       width: 100%;
-      height: var(--viewer-height);
+      height: 88vh;           /* hauteur identique pour toutes les vues OpenSeadragon */
       position: absolute;
       top: 70px;
       left: 0;
       opacity: 0;
-      transition: opacity .6s ease;
+      transition: opacity 1s ease;
       z-index: 0;
+      display: block;
     }
+
     .viewer.active { opacity: 1; z-index: 1; }
 
     /* ===========================
-       MENU (colonne droite)
+       MENU PRINCIPAL
        =========================== */
     .menu {
       position: fixed;
@@ -69,117 +61,152 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      z-index: 100;
+      z-index: 10;
       opacity: 0.5;
-      transition: opacity .3s ease;
+      transition: opacity 0.5s ease;
     }
+
     .menu:hover { opacity: 1; }
+
     .menu button {
-      background: rgba(255,255,255,0.09);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.22);
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
     }
+
     .menu button.active {
-      background: rgba(255,255,255,0.65);
-      color: #000;
-      font-weight: 700;
+      background-color: rgba(255,255,255,0.5);
+      color: black;
+      font-weight: bold;
     }
 
+    /* ===========================
+       FOOTER
+       =========================== */
     footer {
       position: fixed;
       bottom: 10px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      z-index: 101;
-      opacity: 0.7;
-      font-size: .9rem;
+      width: 100%;
+      opacity: 0.6;
+      font-size: 0.9em;
+      z-index: 10;
     }
 
     /* ===========================
-       Chargement (logo respirant)
+       LOADING SCREEN (logo qui respire)
        =========================== */
     #loading-screen {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: #000;
+      align-items: center;
       z-index: 1000;
-      transition: opacity 1.0s ease;
+      transition: opacity 1.2s ease;
     }
+
     #loading-screen.fade-out { opacity: 0; pointer-events: none; }
+
     #loading-screen img {
       width: 40%;
       max-width: 600px;
-      opacity: .85;
+      opacity: 0.8;
       animation: breathing 3.5s ease-in-out infinite;
     }
+
     @keyframes breathing {
-      0% { transform: scale(1); opacity: .85; }
-      50% { transform: scale(1.05); opacity: 1; }
-      100% { transform: scale(1); opacity: .85; }
+      0%   { transform: scale(1); opacity: 0.8; }
+      50%  { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
     }
 
     /* ===========================
-       SECTION : PROJECTION VIDÉO
-       - l'image de projection est mise en background du wrapper
-       - background-size: contain => toute l'image est visible (pas de rognage)
-       - wrapper a une hauteur fixe calculée à partir de la zone principale (var(--viewer-height))
-       - l'iframe est positionnée en % sur ce wrapper (donc les proportions A-F tiennent)
+       PROJECTION VIDÉO (image + iframe intégré)
+       ===========================
+       - L'image est affichée via `object-fit: contain` pour ne jamais être rognée.
+       - Le cadre de la vidéo (video-frame) est positionné en absolu
+         avec des pourcentages relatifs à la taille réelle de l'image wrapper.
+       - La partie .video-inner utilise la technique "aspect ratio" (padding-top)
+         pour forcer 16:9 et éviter que la vidéo soit étirée.
        =========================== */
-
     .projection-container {
       position: absolute;
       top: 70px;
       left: 0;
       width: 100%;
-      height: var(--viewer-height);
+      height: 88vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #000;
+      background-color: black;
+      overflow: hidden;
       opacity: 0;
-      transition: opacity .6s ease;
+      transition: opacity 1s ease;
       z-index: 0;
     }
+
     .projection-container.active { opacity: 1; z-index: 1; }
 
-    /* Le wrapper central : fixe en hauteur (pour que les % de l'iframe restent stables)
-       largeur 70% sur desktop (tu peux l'ajuster), max-width 1280px */
+    /* wrapper centré — sa taille détermine la taille finale de l'image (pas de crop) */
     .projection-wrapper {
+      position: relative;
       width: 70%;
       max-width: 1280px;
-      height: calc(var(--viewer-height) - 20px); /* un petit padding */
-      position: relative;
+      max-height: 88vh;   /* pour ne pas dépasser la zone de visualisation */
       display: block;
-      /* on utilise background-image pour garantir contain + hauteur fixe */
-      background-repeat: no-repeat;
-      background-position: center top; /* tu peux changer pour aligner */
-      background-size: contain; /* <-- essentiel : pas de rognage, toute l'image visible */
-      box-sizing: border-box;
-      overflow: visible;
+      margin: 0 auto;
+      /* centre le contenu */
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* zone de l'iframe nidée dans l'image (utilise les % A..F que tu m'as fournis) */
-    .projection-iframe {
+    /* image : on garantit qu'elle est entièrement visible (bandes noires si besoin) */
+    .projection-wrapper img {
+      width: 100%;
+      height: auto;
+      object-fit: contain; /* important: pas de rognage */
+      display: block;
+    }
+
+    /* conteneur du cadre vidéo — positionné en % (A–F) par rapport au wrapper */
+    .video-frame {
       position: absolute;
-      /* POUR RAPPEL : A=22.65% B=38.35% C=39% D=18.2% E=63.9% F=17.9% */
+      /* valeurs fournies par toi — on les garde en pourcentages pour rester fidèles */
       top: 22.65%;
       left: 18.2%;
       width: 63.9%;
-      height: 38.35%;
-      border: none;
+      /* hauteur gérée par le ratio 16:9 (voir .video-inner) */
+    }
+
+    /* technique aspect-ratio (16/9) : padding-top = 9/16 * 100 = 56.25% */
+    .video-inner {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      /* ajoute léger shadow / arrondi pour intégration */
+      box-shadow: 0 6px 30px rgba(0,0,0,0.6);
       border-radius: 6px;
-      box-shadow: 0 6px 26px rgba(0,0,0,0.6);
+      overflow: hidden;
       background: transparent;
     }
 
-    /* Les boutons du côté gauche de la projection (chapitres) */
+    .video-inner iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* boutons de chapitres (à gauche de l'image) */
     .projection-buttons {
       position: absolute;
       left: -220px;
@@ -188,41 +215,24 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      z-index: 110;
     }
+
     .projection-buttons button {
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.25);
+      background-color: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
       padding: 8px 12px;
       border-radius: 8px;
       cursor: pointer;
     }
-    .projection-buttons button.active {
-      background: rgba(255,255,255,0.8);
-      color: #000;
-      font-weight: 700;
-    }
 
-    /* Responsive : wrapper occupe presque toute la largeur sur petits écrans
-       et on ajuste la position/size de l'iframe */
+    .projection-buttons button.active { background-color: rgba(255,255,255,0.7); color: black; }
+
+    /* responsive : sur petits écrans, agrandir wrapper et repositionner la vidéo */
     @media (max-width: 900px) {
-      .projection-wrapper { width: 92%; height: calc(var(--viewer-height) - 30px); }
-      .projection-iframe {
-        top: 20%;
-        left: 6%;
-        width: 88%;
-        height: 48%;
-      }
-      .projection-buttons {
-        position: static;
-        transform: none;
-        flex-direction: row;
-        left: 0;
-        justify-content: center;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
+      .projection-wrapper { width: 92%; }
+      .video-frame { top: 20%; left: 6%; width: 88%; }
+      .projection-buttons { position: static; flex-direction: row; gap: 8px; margin-top: 12px; transform: none; left: auto; }
     }
   </style>
 </head>
@@ -231,93 +241,97 @@
   <!-- TITRE -->
   <h1>PORTFOLIO D'ARCHITECTURE</h1>
 
-  <!-- ECRAN DE CHARGEMENT -->
+  <!-- LOADING SCREEN (logo) -->
   <div id="loading-screen">
     <img src="signature white.png" alt="Logo Thomas F-C">
   </div>
 
-  <!-- MENU (droite) -->
+  <!-- MENU PRINCIPAL -->
   <div class="menu">
     <button id="btnTop" class="active">Plan de travail</button>
-    <!-- NOTE : on a supprimé la page "Conflits : vidéos 3D" (ancienne) -->
+    <!-- on supprime la page "Conflits : vidéos 3D" comme demandé -->
     <button id="btnProjection">Projection vidéo</button>
     <button id="btnAtlas">Conflits à Turin : Atlas Mnémosyne</button>
     <button id="btnPhotos">Photographie en architecture</button>
   </div>
 
-  <!-- VIEWERS OPENSEADRAGON (pages zoomables) -->
-  <div id="viewer1" class="viewer active"></div>      <!-- page d'accueil : top view -->
-  <div id="viewerAtlas" class="viewer"></div>        <!-- atlas (OpenSeadragon) -->
-  <div id="viewerPhotos" class="viewer"></div>       <!-- panneau photos (OpenSeadragon) -->
+  <!-- VIEWERS OPENSEADRAGON (1 = plan de travail, atlas, photos) -->
+  <div id="viewer1" class="viewer active"></div>
+  <div id="viewerAtlas" class="viewer"></div>
+  <div id="viewerPhotos" class="viewer"></div>
 
-  <!-- SECTION PROJECTION (image + iframe intégrée) -->
+  <!-- SECTION PROJECTION VIDÉO (image + vidéo intégrée + boutons chapitres) -->
   <div id="projectionViewer" class="projection-container">
-    <div class="projection-wrapper" id="projWrapper"
-         style="background-image: url('Projection_video.jpg');">
-      <!-- Boutons chapitres -->
-      <div class="projection-buttons" id="projButtons">
+    <div class="projection-wrapper">
+      <!-- boutons chapitres (gère les vidéos, ils restent visibles à gauche sur grand écran) -->
+      <div class="projection-buttons">
         <button data-video="S_6pEOad4qQ" class="active">Quartier Vallette</button>
         <button data-video="JgXFJDmfGGw">Quartier Pietra Alta</button>
         <button data-video="oKaR1QTc6m4">Quartier Falchera</button>
         <button data-video="LzwkDOWjYUo">Quartier Settimo Torinese</button>
       </div>
 
-      <!-- L'iframe (positionnée en %) - utilise les IDs pour script -->
-      <iframe
-        id="projection-iframe"
-        class="projection-iframe"
-        src="https://www.youtube.com/embed/S_6pEOad4qQ"
-        title="Projection vidéo - Quartier Vallette"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
-      </iframe>
+      <!-- image de la projection (ne sera pas rognée grâce à object-fit: contain) -->
+      <!-- ATTENTION : nom du fichier -> Projection_video.jpg -->
+      <img src="Projection_video.jpg" alt="Projection vidéo">
+
+      <!-- cadre vidéo positionné en pourcentages (A-F) par rapport à la wrapper -->
+      <div class="video-frame" id="projection-video-frame">
+        <div class="video-inner">
+          <iframe id="projection-iframe"
+            src="https://www.youtube.com/embed/S_6pEOad4qQ"
+            title="Projection vidéo - Quartier Vallette"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- FOOTER -->
   <footer>2025 © Thomas F-C — ENISE × ENSASE — Ingénieur / Architecture / Photographie</footer>
 
-  <!-- OpenSeadragon (local copy) -->
+  <!-- OpenSeadragon (local copy fourni / installé par toi) -->
   <script src="openseadragon.min.js"></script>
 
   <script>
     /* ===========================
-       INITIALISATION OPENSEADRAGON
-       (1) viewer1 -> scene_top
-       (2) viewerAtlas -> scene_projection
-       (3) viewerPhotos -> scene_photos
-       =========================== */
-    const viewer1 = OpenSeadragon({
-      id: "viewer1",
-      prefixUrl: "images/",
-      tileSources: "scene_top/top_view.dzi",
-      showNavigator: true,
-      navigatorPosition: "BOTTOM_RIGHT",
-      navigatorSizeRatio: 0.1
-    });
-
-    const viewerAtlas = OpenSeadragon({
-      id: "viewerAtlas",
-      prefixUrl: "images/",
-      tileSources: "scene_projection/projection.dzi",
-      showNavigator: true,
-      navigatorPosition: "BOTTOM_RIGHT",
-      navigatorSizeRatio: 0.1
-    });
-
-    const viewerPhotos = OpenSeadragon({
-      id: "viewerPhotos",
-      prefixUrl: "images/",
-      tileSources: "scene_photos/panneau_photos.dzi",
-      showNavigator: true,
-      navigatorPosition: "BOTTOM_RIGHT",
-      navigatorSizeRatio: 0.1
-    });
+       INITIALISATION OpenSeadragon
+       ===========================
+       On crée les viewers OpenSeadragon et on stocke les instances
+       pour pouvoir les "goHome" (remise à l'échelle d'origine) lors du changement de vue.
+    ============================ */
+    const osdViewers = {
+      top: OpenSeadragon({
+        id: "viewer1",
+        prefixUrl: "images/",              // dossier des icônes OSD (zoom, home, etc.)
+        tileSources: "scene_top/top_view.dzi",
+        showNavigator: true,
+        navigatorPosition: "BOTTOM_RIGHT",
+        navigatorSizeRatio: 0.1
+      }),
+      atlas: OpenSeadragon({
+        id: "viewerAtlas",
+        prefixUrl: "images/",
+        tileSources: "scene_projection/projection.dzi",
+        showNavigator: true,
+        navigatorPosition: "BOTTOM_RIGHT",
+        navigatorSizeRatio: 0.1
+      }),
+      photos: OpenSeadragon({
+        id: "viewerPhotos",
+        prefixUrl: "images/",
+        tileSources: "scene_photos/panneau_photos.dzi",
+        showNavigator: true,
+        navigatorPosition: "BOTTOM_RIGHT",
+        navigatorSizeRatio: 0.1
+      })
+    };
 
     /* ===========================
-       GESTION NAVIGATION (menu)
-       - on cache/affiche les .viewer et projectionViewer
-       =========================== */
+       GESTION NAVIGATION
+       ============================ */
     const buttons = {
       top: document.getElementById("btnTop"),
       projection: document.getElementById("btnProjection"),
@@ -332,54 +346,74 @@
       photos: document.getElementById("viewerPhotos")
     };
 
+    // Fonction pour montrer une vue : on remet aussi à l'échelle les OpenSeadragon viewers
     function showViewer(name) {
-      // hide all
+      // masquer tout
       Object.values(viewers).forEach(v => v.classList.remove("active"));
       Object.values(buttons).forEach(b => b.classList.remove("active"));
-      // show requested
+
+      // afficher choisi
       viewers[name].classList.add("active");
       buttons[name].classList.add("active");
+
+      // si la vue affichée est un viewer OpenSeadragon, on reset son zoom à l'état "home"
+      if (name === "top" || name === "atlas" || name === "photos") {
+        const map = { top: "top", atlas: "atlas", photos: "photos" };
+        const inst = osdViewers[map[name]];
+        if (inst && inst.viewport) {
+          // goHome avec animation = true
+          try {
+            inst.viewport.goHome(true);
+          } catch (e) {
+            // fallback: fitBounds si goHome indisponible
+            try { inst.viewport.fitBounds(inst.world.getHomeBounds()); } catch (e2) {}
+          }
+          // redraw utile parfois
+          try { inst.forceRedraw(); } catch (e) {}
+        }
+      }
     }
 
+    // listeners boutons menu
     buttons.top.addEventListener("click", () => showViewer("top"));
     buttons.projection.addEventListener("click", () => showViewer("projection"));
     buttons.atlas.addEventListener("click", () => showViewer("atlas"));
     buttons.photos.addEventListener("click", () => showViewer("photos"));
 
     /* ===========================
-       BOUTONS CHAPITRES (PROJECTION)
-       - changent l'iframe dans la zone intégrée à l'image
-       =========================== */
+       BOUTONS CHAPITRES (Projection)
+       ============================ */
+    const projButtons = document.querySelectorAll(".projection-buttons button");
     const projIframe = document.getElementById("projection-iframe");
-    const projButtons = document.querySelectorAll("#projButtons button");
 
     projButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         projButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         const videoId = btn.getAttribute("data-video");
-        // remplace la src pour charger le chapitre choisi
+        // Remplace la src de l'iframe (YouTube) — tu peux ajouter params si besoin (autoplay, rel=0, ...)
         projIframe.src = `https://www.youtube.com/embed/${videoId}`;
       });
     });
 
     /* ===========================
-       LOADING SCREEN : on le cache après load
-       (utile si les tuiles OpenSeadragon prennent du temps)
-       =========================== */
+       CHARGEMENT / LOADING SCREEN
+       ============================ */
     window.addEventListener("load", () => {
       const loadingScreen = document.getElementById("loading-screen");
-      // on laisse 800ms pour que la transition soit fluide
       setTimeout(() => loadingScreen.classList.add("fade-out"), 800);
     });
 
     /* ===========================
-       ASTUCE DE DÉPLOIEMENT / CACHES
-       - Après mise à jour sur GitHub Pages : Ctrl+F5 (Windows) ou Cmd+Shift+R (Mac)
-       - Si tu veux forcer un autre fond (ex : remplacer l'image),
-         modifie l'attribut style de #projWrapper :
-         document.getElementById('projWrapper').style.backgroundImage = "url('nouvelle.jpg')";
-       =========================== */
+       ASTUCE : recalage lorsque la fenêtre change de taille
+       - On vérifie la taille de la "projection-wrapper" et on repositionne le cadre de la vidéo (si tu veux faire du JS plus fin).
+       - Actuellement les pourcentages A..F fixés garantissent le placement relatif.
+       ============================ */
+    function recalcVideoFrame() {
+      // si tu veux debug : console.log('recalc');
+      // en l'état on n'a rien à recalculer (tout en %), mais on garde la fonction si tu veux adapter dynamiquement.
+    }
+    window.addEventListener('resize', recalcVideoFrame);
   </script>
 </body>
 </html>
