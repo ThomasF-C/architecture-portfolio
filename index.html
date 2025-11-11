@@ -38,7 +38,6 @@
       opacity: 0;
       transition: opacity 1s ease;
       z-index: 0;
-      background-color: black;
     }
 
     .viewer.active { opacity: 1; z-index: 1; }
@@ -65,7 +64,6 @@
       padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 0.9em;
     }
 
     .menu button.active {
@@ -137,7 +135,6 @@
       position: relative;
       display: inline-block;
       max-height: 88vh;
-      overflow: hidden;
     }
 
     .projection-wrapper img {
@@ -197,73 +194,46 @@
       color: black;
     }
 
-    /* =========================== MOBILE =========================== */
     @media (max-width: 900px) {
-      body { overflow: auto; }
-
-      .menu {
-        top: auto;
-        bottom: 10px;
-        right: 0;
-        left: 0;
-        flex-direction: row;
-        justify-content: center;
-        gap: 6px;
-        background-color: rgba(0,0,0,0.5);
-        padding: 10px;
-      }
-
-      .menu button {
-        font-size: 0.8em;
-        padding: 6px 10px;
-      }
-
-      .projection-wrapper {
-        max-height: none;
-        width: 100%;
-        height: auto;
-      }
-
-      .projection-wrapper img {
-        width: 100%;
-        height: auto;
-      }
-
-      .video-frame {
-        position: static;
-        width: 90%;
-        margin: 10px auto;
-      }
-
       .projection-buttons {
         position: static;
         flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
         gap: 8px;
-        margin-top: 10px;
-      }
-
-      /* Message d'avertissement mobile */
-      #mobile-warning {
-        display: block;
+        margin-top: 12px;
+        transform: none;
       }
     }
 
-    /* Message d'avertissement caché sur PC */
-    #mobile-warning {
+    /* =========================== POP-UP MOBILE =========================== */
+    #mobile-popup {
       display: none;
       position: fixed;
-      bottom: 70px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(255,255,255,0.1);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.85);
       color: white;
-      font-size: 0.8em;
-      padding: 8px 16px;
-      border-radius: 8px;
-      z-index: 20;
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
       text-align: center;
+      padding: 20px;
+      font-size: 1.1em;
+    }
+
+    #mobile-popup button {
+      margin-top: 20px;
+      padding: 8px 16px;
+      background-color: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #mobile-popup button:hover {
+      background-color: rgba(255,255,255,0.4);
     }
   </style>
 </head>
@@ -275,7 +245,12 @@
     <img src="signature white.png" alt="Logo Thomas F-C">
   </div>
 
-  <div id="mobile-warning">💡 Pour une meilleure expérience, consultez ce portfolio sur un ordinateur.</div>
+  <!-- 🚨 Pop-up mobile -->
+  <div id="mobile-popup">
+    ⚠️ Ce site est optimisé pour ordinateur.<br><br>
+    L’affichage sur smartphone ou tablette peut être limité.<br><br>
+    <button id="close-popup">Continuer quand même</button>
+  </div>
 
   <div class="menu">
     <button id="btnTop" class="active">Plan de travail</button>
@@ -321,10 +296,7 @@
         tileSources: "scene_top/top_view.dzi",
         showNavigator: true,
         navigatorPosition: "BOTTOM_RIGHT",
-        navigatorSizeRatio: 0.1,
-        preserveViewport: true,
-        visibilityRatio: 1.0,
-        defaultZoomLevel: 1
+        navigatorSizeRatio: 0.1
       }),
       atlas: OpenSeadragon({
         id: "viewerAtlas",
@@ -332,10 +304,7 @@
         tileSources: "scene_projection/projection.dzi",
         showNavigator: true,
         navigatorPosition: "BOTTOM_RIGHT",
-        navigatorSizeRatio: 0.1,
-        preserveViewport: true,
-        visibilityRatio: 1.0,
-        defaultZoomLevel: 1
+        navigatorSizeRatio: 0.1
       }),
       photos: OpenSeadragon({
         id: "viewerPhotos",
@@ -343,10 +312,7 @@
         tileSources: "scene_photos/panneau_photos.dzi",
         showNavigator: true,
         navigatorPosition: "BOTTOM_RIGHT",
-        navigatorSizeRatio: 0.1,
-        preserveViewport: true,
-        visibilityRatio: 1.0,
-        defaultZoomLevel: 1
+        navigatorSizeRatio: 0.1
       })
     };
 
@@ -388,15 +354,20 @@
       });
     });
 
-    const loadingScreen = document.getElementById("loading-screen");
     window.addEventListener("load", () => {
+      const loadingScreen = document.getElementById("loading-screen");
       setTimeout(() => loadingScreen.classList.add("fade-out"), 800);
-    });
-    setTimeout(() => {
-      if (loadingScreen && !loadingScreen.classList.contains("fade-out")) {
-        loadingScreen.classList.add("fade-out");
+
+      // ✅ Pop-up mobile
+      if (window.innerWidth < 900) {
+        const popup = document.getElementById("mobile-popup");
+        const closeBtn = document.getElementById("close-popup");
+        popup.style.display = "flex";
+        closeBtn.addEventListener("click", () => {
+          popup.style.display = "none";
+        });
       }
-    }, 6000);
+    });
   </script>
 </body>
 </html>
