@@ -5,12 +5,16 @@
   <title>PORTFOLIO D'ARCHITECTURE</title>
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Police Ubuntu depuis Google Fonts -->
+  <!-- Police principale : Ubuntu (Google Fonts) -->
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap" rel="stylesheet">
 
+  <!-- Feuille de style principale -->
   <link rel="stylesheet" href="style.css">
 
   <style>
+    /* ===========================
+       STYLE GLOBAL
+    ============================ */
     body {
       background-color: black;
       color: white;
@@ -32,7 +36,9 @@
       opacity: 1;
     }
 
-    /* --- VIEWER CONTAINERS --- */
+    /* ===========================
+       VIEWERS (OpenSeadragon)
+    ============================ */
     .viewer {
       width: 100%;
       height: 88vh;
@@ -49,7 +55,9 @@
       z-index: 1;
     }
 
-    /* --- NAVIGATION --- */
+    /* ===========================
+       MENU PRINCIPAL
+    ============================ */
     .menu {
       position: fixed;
       top: 15px;
@@ -87,7 +95,9 @@
       font-weight: bold;
     }
 
-    /* --- FOOTER --- */
+    /* ===========================
+       PIED DE PAGE
+    ============================ */
     footer {
       position: fixed;
       bottom: 10px;
@@ -97,7 +107,9 @@
       z-index: 10;
     }
 
-    /* --- ÉCRAN DE CHARGEMENT --- */
+    /* ===========================
+       ÉCRAN DE CHARGEMENT
+    ============================ */
     #loading-screen {
       position: fixed;
       top: 0;
@@ -124,13 +136,16 @@
       animation: breathing 3.5s ease-in-out infinite;
     }
 
+    /* Effet de respiration sur le logo */
     @keyframes breathing {
       0%   { transform: scale(1); opacity: 0.8; }
       50%  { transform: scale(1.05); opacity: 1; }
       100% { transform: scale(1); opacity: 0.8; }
     }
 
-    /* --- PROJECTION VIDÉO (image + iframe intégrée + boutons) --- */
+    /* ===========================
+       PROJECTION VIDÉO
+    ============================ */
     .projection-container {
       position: absolute;
       top: 70px;
@@ -152,6 +167,7 @@
       z-index: 1;
     }
 
+    /* Conteneur image + iframe */
     .projection-wrapper {
       position: relative;
       width: 70%;
@@ -166,6 +182,7 @@
       display: block;
     }
 
+    /* Zone de la vidéo YouTube (dans l'image) */
     .projection-iframe {
       position: absolute;
       top: 22.65%;
@@ -178,6 +195,9 @@
       border-radius: 6px;
     }
 
+    /* ===========================
+       BOUTONS DE VIDÉO
+    ============================ */
     .projection-buttons {
       position: absolute;
       left: -220px;
@@ -210,6 +230,9 @@
       font-weight: bold;
     }
 
+    /* ===========================
+       ADAPTATION MOBILE
+    ============================ */
     @media (max-width: 900px) {
       .projection-wrapper {
         width: 92%;
@@ -220,19 +243,33 @@
         width: 88%;
         height: 48%;
       }
+      .projection-buttons {
+        position: static;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 15px;
+      }
     }
   </style>
 </head>
 
 <body>
+  <!-- ===========================
+       TITRE PRINCIPAL
+  ============================ -->
   <h1>PORTFOLIO D'ARCHITECTURE</h1>
 
-  <!-- Écran de chargement -->
+  <!-- ===========================
+       ÉCRAN DE CHARGEMENT
+  ============================ -->
   <div id="loading-screen">
     <img src="signature white.png" alt="Logo Thomas F-C">
   </div>
 
-  <!-- Menu principal -->
+  <!-- ===========================
+       MENU DE NAVIGATION
+  ============================ -->
   <div class="menu">
     <button id="btnTop" class="active">Plan de travail</button>
     <button id="btnProjection">Projection vidéo</button>
@@ -240,19 +277,31 @@
     <button id="btnPhotos">Photographie en architecture</button>
   </div>
 
-  <!-- VIEWERS -->
+  <!-- ===========================
+       VIEWERS OPENSEADRAGON
+  ============================ -->
   <div id="viewer1" class="viewer active"></div>
+  <div id="viewerAtlas" class="viewer"></div>
+  <div id="viewerPhotos" class="viewer"></div>
 
-  <!-- PROJECTION VIDÉO -->
+  <!-- ===========================
+       SECTION : PROJECTION VIDÉO
+  ============================ -->
   <div id="projectionViewer" class="projection-container">
     <div class="projection-wrapper">
+      
+      <!-- Boutons pour changer de vidéo -->
       <div class="projection-buttons">
         <button data-video="S_6pEOad4qQ" class="active">Quartier Vallette</button>
         <button data-video="JgXFJDmfGGw">Quartier Pietra Alta</button>
         <button data-video="oKaR1QTc6m4">Quartier Falchera</button>
         <button data-video="LzwkDOWjYUo">Quartier Settimo Torinese</button>
       </div>
+
+      <!-- Image de fond (TV / support) -->
       <img src="Projection_video.jpg" alt="Projection vidéo">
+
+      <!-- Vidéo YouTube intégrée -->
       <iframe
         id="projection-iframe"
         class="projection-iframe"
@@ -264,15 +313,20 @@
     </div>
   </div>
 
-  <div id="viewerAtlas" class="viewer"></div>
-  <div id="viewerPhotos" class="viewer"></div>
-
+  <!-- ===========================
+       PIED DE PAGE
+  ============================ -->
   <footer>2025 © Thomas F-C — ENISE × ENSASE — Ingénieur / Architecture / Photographie</footer>
 
+  <!-- ===========================
+       SCRIPTS
+  ============================ -->
   <script src="openseadragon.min.js"></script>
 
   <script>
-    // === VIEWERS OPENSEADRAGON ===
+    /* ===========================
+       INITIALISATION DES VIEWERS
+    ============================ */
     const viewer1 = OpenSeadragon({
       id: "viewer1",
       prefixUrl: "images/",
@@ -300,7 +354,9 @@
       navigatorSizeRatio: 0.1
     });
 
-    // === NAVIGATION ===
+    /* ===========================
+       GESTION DU MENU
+    ============================ */
     const buttons = {
       top: document.getElementById("btnTop"),
       projection: document.getElementById("btnProjection"),
@@ -315,6 +371,7 @@
       photos: document.getElementById("viewerPhotos")
     };
 
+    // Fonction pour afficher le viewer sélectionné
     function showViewer(name) {
       Object.values(viewers).forEach(v => v.classList.remove("active"));
       Object.values(buttons).forEach(b => b.classList.remove("active"));
@@ -322,12 +379,15 @@
       buttons[name].classList.add("active");
     }
 
+    // Événements des boutons du menu
     buttons.top.addEventListener("click", () => showViewer("top"));
     buttons.projection.addEventListener("click", () => showViewer("projection"));
     buttons.atlas.addEventListener("click", () => showViewer("atlas"));
     buttons.photos.addEventListener("click", () => showViewer("photos"));
 
-    // === VIDÉOS (Projection) ===
+    /* ===========================
+       BOUTONS DE VIDÉO
+    ============================ */
     const projIframe = document.getElementById("projection-iframe");
     const projButtons = document.querySelectorAll(".projection-buttons button");
 
@@ -340,7 +400,9 @@
       });
     });
 
-    // === CHARGEMENT ===
+    /* ===========================
+       ÉCRAN DE CHARGEMENT
+    ============================ */
     window.addEventListener("load", () => {
       const loadingScreen = document.getElementById("loading-screen");
       setTimeout(() => loadingScreen.classList.add("fade-out"), 800);
