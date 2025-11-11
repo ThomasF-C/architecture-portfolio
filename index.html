@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>portfolio architecture TFC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>portfolio architecture tfc</title>
   <link rel="icon" type="image/png" href="favicon.png">
 
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap" rel="stylesheet">
@@ -132,7 +133,6 @@
 
     .projection-container.active { opacity: 1; z-index: 1; }
 
-    /* l'image de fond conserve son ratio, sans rognage */
     .projection-wrapper {
       position: relative;
       display: inline-block;
@@ -146,10 +146,9 @@
       object-fit: contain;
     }
 
-    /* positionnement du cadre vidéo (ajusté pour être plus haut sur l’écran) */
     .video-frame {
       position: absolute;
-      top: 22.5%;   /* remonte légèrement la vidéo */
+      top: 22%; /* ajusté pour que la vidéo soit bien centrée */
       left: 18.2%;
       width: 63.9%;
     }
@@ -157,11 +156,10 @@
     .video-inner {
       position: relative;
       width: 100%;
-      padding-top: 56.25%; /* 16:9 */
+      padding-top: 56.25%; /* ratio 16:9 */
       box-shadow: 0 6px 30px rgba(0,0,0,0.6);
       border-radius: 6px;
       overflow: hidden;
-      background: transparent;
     }
 
     .video-inner iframe {
@@ -198,21 +196,61 @@
       color: black;
     }
 
-    /* responsive (mobile) */
+    /* =========================== RESPONSIVE =========================== */
     @media (max-width: 900px) {
+      body { overflow-y: auto; }
+
+      h1 {
+        font-size: 1.4em;
+        margin: 10px 0;
+      }
+
+      .menu {
+        flex-direction: row;
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .menu button {
+        padding: 6px 10px;
+        font-size: 0.85em;
+      }
+
+      .projection-wrapper img {
+        height: auto;
+        width: 100%;
+      }
+
+      .video-frame {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: 10px;
+      }
+
       .projection-buttons {
         position: static;
         flex-direction: row;
-        gap: 8px;
-        margin-top: 12px;
-        transform: none;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      footer {
+        font-size: 0.7em;
+        position: relative;
+        margin-top: 10px;
       }
     }
   </style>
 </head>
 
 <body>
-  <h1>PORTFOLIO D'ARCHITECTURE</h1>
+  <h1>portfolio d’architecture</h1>
 
   <div id="loading-screen">
     <img src="signature white.png" alt="Logo Thomas F-C">
@@ -255,72 +293,72 @@
 
   <script src="openseadragon.min.js"></script>
   <script>
-    const osdViewers = {
-      top: OpenSeadragon({
-        id: "viewer1",
-        prefixUrl: "images/",
-        tileSources: "scene_top/top_view.dzi",
-        showNavigator: true,
-        navigatorPosition: "BOTTOM_RIGHT",
-        navigatorSizeRatio: 0.1
-      }),
-      atlas: OpenSeadragon({
-        id: "viewerAtlas",
-        prefixUrl: "images/",
-        tileSources: "scene_projection/projection.dzi",
-        showNavigator: true,
-        navigatorPosition: "BOTTOM_RIGHT",
-        navigatorSizeRatio: 0.1
-      }),
-      photos: OpenSeadragon({
-        id: "viewerPhotos",
-        prefixUrl: "images/",
-        tileSources: "scene_photos/panneau_photos.dzi",
-        showNavigator: true,
-        navigatorPosition: "BOTTOM_RIGHT",
-        navigatorSizeRatio: 0.1
-      })
-    };
-
-    const buttons = {
-      top: document.getElementById("btnTop"),
-      projection: document.getElementById("btnProjection"),
-      atlas: document.getElementById("btnAtlas"),
-      photos: document.getElementById("btnPhotos")
-    };
-
-    const viewers = {
-      top: document.getElementById("viewer1"),
-      projection: document.getElementById("projectionViewer"),
-      atlas: document.getElementById("viewerAtlas"),
-      photos: document.getElementById("viewerPhotos")
-    };
-
-    function showViewer(name) {
-      Object.values(viewers).forEach(v => v.classList.remove("active"));
-      Object.values(buttons).forEach(b => b.classList.remove("active"));
-      viewers[name].classList.add("active");
-      buttons[name].classList.add("active");
-    }
-
-    buttons.top.addEventListener("click", () => showViewer("top"));
-    buttons.projection.addEventListener("click", () => showViewer("projection"));
-    buttons.atlas.addEventListener("click", () => showViewer("atlas"));
-    buttons.photos.addEventListener("click", () => showViewer("photos"));
-
-    const projButtons = document.querySelectorAll(".projection-buttons button");
-    const projIframe = document.getElementById("projection-iframe");
-
-    projButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        projButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const videoId = btn.getAttribute("data-video");
-        projIframe.src = `https://www.youtube.com/embed/${videoId}`;
-      });
-    });
-
     window.addEventListener("load", () => {
+      const osdViewers = {
+        top: OpenSeadragon({
+          id: "viewer1",
+          prefixUrl: "images/",
+          tileSources: "scene_top/top_view.dzi",
+          showNavigator: true,
+          navigatorPosition: "BOTTOM_RIGHT",
+          navigatorSizeRatio: 0.1
+        }),
+        atlas: OpenSeadragon({
+          id: "viewerAtlas",
+          prefixUrl: "images/",
+          tileSources: "scene_projection/projection.dzi",
+          showNavigator: true,
+          navigatorPosition: "BOTTOM_RIGHT",
+          navigatorSizeRatio: 0.1
+        }),
+        photos: OpenSeadragon({
+          id: "viewerPhotos",
+          prefixUrl: "images/",
+          tileSources: "scene_photos/panneau_photos.dzi",
+          showNavigator: true,
+          navigatorPosition: "BOTTOM_RIGHT",
+          navigatorSizeRatio: 0.1
+        })
+      };
+
+      const buttons = {
+        top: document.getElementById("btnTop"),
+        projection: document.getElementById("btnProjection"),
+        atlas: document.getElementById("btnAtlas"),
+        photos: document.getElementById("btnPhotos")
+      };
+
+      const viewers = {
+        top: document.getElementById("viewer1"),
+        projection: document.getElementById("projectionViewer"),
+        atlas: document.getElementById("viewerAtlas"),
+        photos: document.getElementById("viewerPhotos")
+      };
+
+      function showViewer(name) {
+        Object.values(viewers).forEach(v => v.classList.remove("active"));
+        Object.values(buttons).forEach(b => b.classList.remove("active"));
+        viewers[name].classList.add("active");
+        buttons[name].classList.add("active");
+      }
+
+      buttons.top.addEventListener("click", () => showViewer("top"));
+      buttons.projection.addEventListener("click", () => showViewer("projection"));
+      buttons.atlas.addEventListener("click", () => showViewer("atlas"));
+      buttons.photos.addEventListener("click", () => showViewer("photos"));
+
+      const projButtons = document.querySelectorAll(".projection-buttons button");
+      const projIframe = document.getElementById("projection-iframe");
+
+      projButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          projButtons.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          const videoId = btn.getAttribute("data-video");
+          projIframe.src = `https://www.youtube.com/embed/${videoId}`;
+        });
+      });
+
       const loadingScreen = document.getElementById("loading-screen");
       setTimeout(() => loadingScreen.classList.add("fade-out"), 800);
     });
