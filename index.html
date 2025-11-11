@@ -173,13 +173,18 @@
       width: 70%;
       max-width: 1280px;
       height: auto;
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
     }
 
     .projection-wrapper img {
       width: 100%;
       height: auto;
       display: block;
+      object-fit: contain; /* 🔹 garantit que toute l'image est visible */
+      background-color: black; /* bandes noires autour si nécessaire */
     }
 
     /* Zone de la vidéo YouTube (dans l'image) */
