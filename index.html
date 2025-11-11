@@ -8,7 +8,6 @@
   <!-- Police Ubuntu depuis Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap" rel="stylesheet">
 
-  <script src="openseadragon.min.js"></script>
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -125,14 +124,13 @@
       animation: breathing 3.5s ease-in-out infinite;
     }
 
-    /* Animation respiration */
     @keyframes breathing {
       0%   { transform: scale(1); opacity: 0.8; }
       50%  { transform: scale(1.05); opacity: 1; }
       100% { transform: scale(1); opacity: 0.8; }
     }
 
-    /* --- VIDÉO VIEWER --- */
+    /* --- SECTION VIDÉO --- */
     .video-container {
       position: absolute;
       top: 70px;
@@ -199,29 +197,73 @@
       font-weight: bold;
     }
 
+    /* --- PROJECTION VIDÉO (image + iframe intégrée) --- */
+    .projection-container {
+      position: absolute;
+      top: 70px;
+      left: 0;
+      width: 100%;
+      height: 88vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 0;
+    }
+
+    .projection-container.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .projection-wrapper {
+      position: relative;
+      width: auto;
+      height: 100%;
+    }
+
+    .projection-wrapper img {
+      height: 100%;
+      width: auto;
+      display: block;
+    }
+
+    /* Positionnement de l'iframe selon proportions A-F */
+    .projection-wrapper iframe {
+      position: absolute;
+      top: 22.65%;
+      left: 18.2%;
+      width: 63.9%;
+      height: 38.35%;
+      border: none;
+    }
+
   </style>
 </head>
 
 <body>
   <h1>PORTFOLIO D'ARCHITECTURE</h1>
 
-  <!-- Écran de chargement avec logo -->
+  <!-- Écran de chargement -->
   <div id="loading-screen">
     <img src="signature white.png" alt="Logo Thomas F-C">
   </div>
 
-  <!-- Navigation -->
+  <!-- Menu principal -->
   <div class="menu">
     <button id="btnTop" class="active">Plan de travail</button>
     <button id="btnVideo">Modélisations 3D</button>
-    <button id="btnProjection">Atlas Mnémosyne : conflits à Turin</button>
+    <button id="btnProjection">Projection vidéo</button>
+    <button id="btnAtlas">Atlas Mnémosyne : conflits à Turin</button>
     <button id="btnPhotos">Photographie & architecture</button>
   </div>
 
   <!-- VIEWERS -->
   <div id="viewer1" class="viewer active"></div>
 
-  <!-- SECTION VIDÉO -->
   <div id="videoViewer" class="video-container">
     <div class="video-content">
       <div class="video-buttons">
@@ -234,13 +276,23 @@
     </div>
   </div>
 
-  <div id="viewer3" class="viewer"></div>
-  <div id="viewer4" class="viewer"></div>
+  <!-- NOUVEL ONGLET : PROJECTION VIDÉO -->
+  <div id="projectionViewer" class="projection-container">
+    <div class="projection-wrapper">
+      <img src="Projection_video - dimensions.jpg" alt="Projection vidéo">
+      <iframe src="https://www.youtube.com/embed/S_6pEOad4qQ" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div id="viewerAtlas" class="viewer"></div>
+  <div id="viewerPhotos" class="viewer"></div>
 
   <footer>2025 © Thomas F-C — ENISE × ENSASE — Ingénieur / Architecture / Photographie</footer>
 
+  <script src="openseadragon.min.js"></script>
+
   <script>
-    // === Création des 3 viewers ===
+    // === VIEWERS OPENSEADRAGON ===
     const viewer1 = OpenSeadragon({
       id: "viewer1",
       prefixUrl: "images/",
@@ -250,8 +302,8 @@
       navigatorSizeRatio: 0.1
     });
 
-    const viewer3 = OpenSeadragon({
-      id: "viewer3",
+    const viewerAtlas = OpenSeadragon({
+      id: "viewerAtlas",
       prefixUrl: "images/",
       tileSources: "scene_projection/projection.dzi",
       showNavigator: true,
@@ -259,8 +311,8 @@
       navigatorSizeRatio: 0.1
     });
 
-    const viewer4 = OpenSeadragon({
-      id: "viewer4",
+    const viewerPhotos = OpenSeadragon({
+      id: "viewerPhotos",
       prefixUrl: "images/",
       tileSources: "scene_photos/panneau_photos.dzi",
       showNavigator: true,
@@ -273,14 +325,16 @@
       top: document.getElementById("btnTop"),
       video: document.getElementById("btnVideo"),
       projection: document.getElementById("btnProjection"),
+      atlas: document.getElementById("btnAtlas"),
       photos: document.getElementById("btnPhotos")
     };
 
     const viewers = {
       top: document.getElementById("viewer1"),
       video: document.getElementById("videoViewer"),
-      projection: document.getElementById("viewer3"),
-      photos: document.getElementById("viewer4")
+      projection: document.getElementById("projectionViewer"),
+      atlas: document.getElementById("viewerAtlas"),
+      photos: document.getElementById("viewerPhotos")
     };
 
     function showViewer(name) {
@@ -293,9 +347,10 @@
     buttons.top.addEventListener("click", () => showViewer("top"));
     buttons.video.addEventListener("click", () => showViewer("video"));
     buttons.projection.addEventListener("click", () => showViewer("projection"));
+    buttons.atlas.addEventListener("click", () => showViewer("atlas"));
     buttons.photos.addEventListener("click", () => showViewer("photos"));
 
-    // === GESTION DES VIDÉOS ===
+    // === VIDÉOS ===
     const iframe = document.getElementById("youtube-frame");
     const videoButtons = document.querySelectorAll(".video-buttons button");
 
