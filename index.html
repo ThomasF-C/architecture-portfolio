@@ -5,59 +5,63 @@
   <title>PORTFOLIO D'ARCHITECTURE</title>
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Police principale : Ubuntu (Google Fonts) -->
+  <!-- Police Ubuntu -->
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap" rel="stylesheet">
 
-  <!-- Feuille de style principale -->
+  <!-- CSS principal (si tu as style.css, il est chargé aussi) -->
   <link rel="stylesheet" href="style.css">
 
+  <!--
+    Styles spécifiques à cette page (garde-les ici pour faciliter les tests).
+    Les commentaires dans le CSS expliquent les choix.
+  -->
   <style>
     /* ===========================
        STYLE GLOBAL
-    ============================ */
+       =========================== */
+    :root {
+      --viewer-height: 88vh; /* hauteur utilisée pour la zone principale */
+    }
+
+    html,body {
+      height: 100%;
+    }
+
     body {
-      background-color: black;
-      color: white;
+      margin: 0;
+      background: #000;
+      color: #fff;
       font-family: 'Ubuntu', sans-serif;
       text-align: center;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
+      overflow: hidden; /* le layout est en full screen */
     }
 
     h1 {
       margin: 20px 0;
-      font-size: 2em;
+      font-size: 2rem;
       opacity: 0.3;
-      transition: opacity 1s ease;
+      transition: opacity .8s ease;
     }
-
-    h1:hover {
-      opacity: 1;
-    }
+    h1:hover { opacity: 1; }
 
     /* ===========================
-       VIEWERS (OpenSeadragon)
-    ============================ */
+       OpenSeadragon viewers (les "pages" zoomables)
+       =========================== */
     .viewer {
       width: 100%;
-      height: 88vh;
+      height: var(--viewer-height);
       position: absolute;
       top: 70px;
       left: 0;
       opacity: 0;
-      transition: opacity 1s ease;
+      transition: opacity .6s ease;
       z-index: 0;
     }
-
-    .viewer.active {
-      opacity: 1;
-      z-index: 1;
-    }
+    .viewer.active { opacity: 1; z-index: 1; }
 
     /* ===========================
-       MENU PRINCIPAL
-    ============================ */
+       MENU (colonne droite)
+       =========================== */
     .menu {
       position: fixed;
       top: 15px;
@@ -65,144 +69,117 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      z-index: 10;
+      z-index: 100;
       opacity: 0.5;
-      transition: opacity 0.5s ease;
+      transition: opacity .3s ease;
     }
-
-    .menu:hover {
-      opacity: 1;
-    }
-
+    .menu:hover { opacity: 1; }
     .menu button {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255,255,255,0.09);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.22);
       padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
     }
-
-    .menu button:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-      transform: scale(1.05);
-    }
-
     .menu button.active {
-      background-color: rgba(255, 255, 255, 0.5);
-      color: black;
-      font-weight: bold;
+      background: rgba(255,255,255,0.65);
+      color: #000;
+      font-weight: 700;
     }
 
-    /* ===========================
-       PIED DE PAGE
-    ============================ */
     footer {
       position: fixed;
       bottom: 10px;
-      width: 100%;
-      opacity: 0.6;
-      font-size: 0.9em;
-      z-index: 10;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 101;
+      opacity: 0.7;
+      font-size: .9rem;
     }
 
     /* ===========================
-       ÉCRAN DE CHARGEMENT
-    ============================ */
+       Chargement (logo respirant)
+       =========================== */
     #loading-screen {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: black;
+      inset: 0;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      background: #000;
       z-index: 1000;
-      transition: opacity 1.2s ease;
+      transition: opacity 1.0s ease;
     }
-
-    #loading-screen.fade-out {
-      opacity: 0;
-      pointer-events: none;
-    }
-
+    #loading-screen.fade-out { opacity: 0; pointer-events: none; }
     #loading-screen img {
       width: 40%;
       max-width: 600px;
-      opacity: 0.8;
+      opacity: .85;
       animation: breathing 3.5s ease-in-out infinite;
     }
-
-    /* Effet de respiration sur le logo */
     @keyframes breathing {
-      0%   { transform: scale(1); opacity: 0.8; }
-      50%  { transform: scale(1.05); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.8; }
+      0% { transform: scale(1); opacity: .85; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: .85; }
     }
 
     /* ===========================
-       PROJECTION VIDÉO
-    ============================ */
+       SECTION : PROJECTION VIDÉO
+       - l'image de projection est mise en background du wrapper
+       - background-size: contain => toute l'image est visible (pas de rognage)
+       - wrapper a une hauteur fixe calculée à partir de la zone principale (var(--viewer-height))
+       - l'iframe est positionnée en % sur ce wrapper (donc les proportions A-F tiennent)
+       =========================== */
+
     .projection-container {
       position: absolute;
       top: 70px;
       left: 0;
       width: 100%;
-      height: 88vh;
+      height: var(--viewer-height);
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: black;
-      overflow: hidden;
+      background: #000;
       opacity: 0;
-      transition: opacity 1s ease;
+      transition: opacity .6s ease;
       z-index: 0;
     }
+    .projection-container.active { opacity: 1; z-index: 1; }
 
-    .projection-container.active {
-      opacity: 1;
-      z-index: 1;
-    }
-
-    /* Conteneur image + iframe */
+    /* Le wrapper central : fixe en hauteur (pour que les % de l'iframe restent stables)
+       largeur 70% sur desktop (tu peux l'ajuster), max-width 1280px */
     .projection-wrapper {
-      position: relative;
       width: 70%;
       max-width: 1280px;
-      height: auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 auto;
-    }
-
-    .projection-wrapper img {
-      width: 100%;
-      height: auto;
+      height: calc(var(--viewer-height) - 20px); /* un petit padding */
+      position: relative;
       display: block;
-      object-fit: contain; /* 🔹 garantit que toute l'image est visible */
-      background-color: black; /* bandes noires autour si nécessaire */
+      /* on utilise background-image pour garantir contain + hauteur fixe */
+      background-repeat: no-repeat;
+      background-position: center top; /* tu peux changer pour aligner */
+      background-size: contain; /* <-- essentiel : pas de rognage, toute l'image visible */
+      box-sizing: border-box;
+      overflow: visible;
     }
 
-    /* Zone de la vidéo YouTube (dans l'image) */
+    /* zone de l'iframe nidée dans l'image (utilise les % A..F que tu m'as fournis) */
     .projection-iframe {
       position: absolute;
+      /* POUR RAPPEL : A=22.65% B=38.35% C=39% D=18.2% E=63.9% F=17.9% */
       top: 22.65%;
       left: 18.2%;
       width: 63.9%;
       height: 38.35%;
       border: none;
-      background: transparent;
-      box-shadow: 0 6px 30px rgba(0,0,0,0.6);
       border-radius: 6px;
+      box-shadow: 0 6px 26px rgba(0,0,0,0.6);
+      background: transparent;
     }
 
-    /* ===========================
-       BOUTONS DE VIDÉO
-    ============================ */
+    /* Les boutons du côté gauche de la projection (chapitres) */
     .projection-buttons {
       position: absolute;
       left: -220px;
@@ -211,37 +188,26 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      z-index: 110;
     }
-
     .projection-buttons button {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
       padding: 8px 12px;
       border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
-
-    .projection-buttons button:hover {
-      background-color: rgba(255, 255, 255, 0.4);
-      color: black;
-      transform: scale(1.05);
-    }
-
     .projection-buttons button.active {
-      background-color: rgba(255, 255, 255, 0.7);
-      color: black;
-      font-weight: bold;
+      background: rgba(255,255,255,0.8);
+      color: #000;
+      font-weight: 700;
     }
 
-    /* ===========================
-       ADAPTATION MOBILE
-    ============================ */
+    /* Responsive : wrapper occupe presque toute la largeur sur petits écrans
+       et on ajuste la position/size de l'iframe */
     @media (max-width: 900px) {
-      .projection-wrapper {
-        width: 92%;
-      }
+      .projection-wrapper { width: 92%; height: calc(var(--viewer-height) - 30px); }
       .projection-iframe {
         top: 20%;
         left: 6%;
@@ -250,63 +216,53 @@
       }
       .projection-buttons {
         position: static;
+        transform: none;
         flex-direction: row;
+        left: 0;
         justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 15px;
+        gap: 8px;
+        margin-bottom: 8px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- ===========================
-       TITRE PRINCIPAL
-  ============================ -->
+  <!-- TITRE -->
   <h1>PORTFOLIO D'ARCHITECTURE</h1>
 
-  <!-- ===========================
-       ÉCRAN DE CHARGEMENT
-  ============================ -->
+  <!-- ECRAN DE CHARGEMENT -->
   <div id="loading-screen">
     <img src="signature white.png" alt="Logo Thomas F-C">
   </div>
 
-  <!-- ===========================
-       MENU DE NAVIGATION
-  ============================ -->
+  <!-- MENU (droite) -->
   <div class="menu">
     <button id="btnTop" class="active">Plan de travail</button>
+    <!-- NOTE : on a supprimé la page "Conflits : vidéos 3D" (ancienne) -->
     <button id="btnProjection">Projection vidéo</button>
     <button id="btnAtlas">Conflits à Turin : Atlas Mnémosyne</button>
     <button id="btnPhotos">Photographie en architecture</button>
   </div>
 
-  <!-- ===========================
-       VIEWERS OPENSEADRAGON
-  ============================ -->
-  <div id="viewer1" class="viewer active"></div>
-  <div id="viewerAtlas" class="viewer"></div>
-  <div id="viewerPhotos" class="viewer"></div>
+  <!-- VIEWERS OPENSEADRAGON (pages zoomables) -->
+  <div id="viewer1" class="viewer active"></div>      <!-- page d'accueil : top view -->
+  <div id="viewerAtlas" class="viewer"></div>        <!-- atlas (OpenSeadragon) -->
+  <div id="viewerPhotos" class="viewer"></div>       <!-- panneau photos (OpenSeadragon) -->
 
-  <!-- ===========================
-       SECTION : PROJECTION VIDÉO
-  ============================ -->
+  <!-- SECTION PROJECTION (image + iframe intégrée) -->
   <div id="projectionViewer" class="projection-container">
-    <div class="projection-wrapper">
-      
-      <!-- Boutons pour changer de vidéo -->
-      <div class="projection-buttons">
+    <div class="projection-wrapper" id="projWrapper"
+         style="background-image: url('Projection_video.jpg');">
+      <!-- Boutons chapitres -->
+      <div class="projection-buttons" id="projButtons">
         <button data-video="S_6pEOad4qQ" class="active">Quartier Vallette</button>
         <button data-video="JgXFJDmfGGw">Quartier Pietra Alta</button>
         <button data-video="oKaR1QTc6m4">Quartier Falchera</button>
         <button data-video="LzwkDOWjYUo">Quartier Settimo Torinese</button>
       </div>
 
-      <!-- Image de fond (TV / support) -->
-      <img src="Projection_video.jpg" alt="Projection vidéo">
-
-      <!-- Vidéo YouTube intégrée -->
+      <!-- L'iframe (positionnée en %) - utilise les IDs pour script -->
       <iframe
         id="projection-iframe"
         class="projection-iframe"
@@ -318,20 +274,19 @@
     </div>
   </div>
 
-  <!-- ===========================
-       PIED DE PAGE
-  ============================ -->
+  <!-- FOOTER -->
   <footer>2025 © Thomas F-C — ENISE × ENSASE — Ingénieur / Architecture / Photographie</footer>
 
-  <!-- ===========================
-       SCRIPTS
-  ============================ -->
+  <!-- OpenSeadragon (local copy) -->
   <script src="openseadragon.min.js"></script>
 
   <script>
     /* ===========================
-       INITIALISATION DES VIEWERS
-    ============================ */
+       INITIALISATION OPENSEADRAGON
+       (1) viewer1 -> scene_top
+       (2) viewerAtlas -> scene_projection
+       (3) viewerPhotos -> scene_photos
+       =========================== */
     const viewer1 = OpenSeadragon({
       id: "viewer1",
       prefixUrl: "images/",
@@ -360,8 +315,9 @@
     });
 
     /* ===========================
-       GESTION DU MENU
-    ============================ */
+       GESTION NAVIGATION (menu)
+       - on cache/affiche les .viewer et projectionViewer
+       =========================== */
     const buttons = {
       top: document.getElementById("btnTop"),
       projection: document.getElementById("btnProjection"),
@@ -376,42 +332,54 @@
       photos: document.getElementById("viewerPhotos")
     };
 
-    // Fonction pour afficher le viewer sélectionné
     function showViewer(name) {
+      // hide all
       Object.values(viewers).forEach(v => v.classList.remove("active"));
       Object.values(buttons).forEach(b => b.classList.remove("active"));
+      // show requested
       viewers[name].classList.add("active");
       buttons[name].classList.add("active");
     }
 
-    // Événements des boutons du menu
     buttons.top.addEventListener("click", () => showViewer("top"));
     buttons.projection.addEventListener("click", () => showViewer("projection"));
     buttons.atlas.addEventListener("click", () => showViewer("atlas"));
     buttons.photos.addEventListener("click", () => showViewer("photos"));
 
     /* ===========================
-       BOUTONS DE VIDÉO
-    ============================ */
+       BOUTONS CHAPITRES (PROJECTION)
+       - changent l'iframe dans la zone intégrée à l'image
+       =========================== */
     const projIframe = document.getElementById("projection-iframe");
-    const projButtons = document.querySelectorAll(".projection-buttons button");
+    const projButtons = document.querySelectorAll("#projButtons button");
 
     projButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         projButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         const videoId = btn.getAttribute("data-video");
+        // remplace la src pour charger le chapitre choisi
         projIframe.src = `https://www.youtube.com/embed/${videoId}`;
       });
     });
 
     /* ===========================
-       ÉCRAN DE CHARGEMENT
-    ============================ */
+       LOADING SCREEN : on le cache après load
+       (utile si les tuiles OpenSeadragon prennent du temps)
+       =========================== */
     window.addEventListener("load", () => {
       const loadingScreen = document.getElementById("loading-screen");
+      // on laisse 800ms pour que la transition soit fluide
       setTimeout(() => loadingScreen.classList.add("fade-out"), 800);
     });
+
+    /* ===========================
+       ASTUCE DE DÉPLOIEMENT / CACHES
+       - Après mise à jour sur GitHub Pages : Ctrl+F5 (Windows) ou Cmd+Shift+R (Mac)
+       - Si tu veux forcer un autre fond (ex : remplacer l'image),
+         modifie l'attribut style de #projWrapper :
+         document.getElementById('projWrapper').style.backgroundImage = "url('nouvelle.jpg')";
+       =========================== */
   </script>
 </body>
 </html>
