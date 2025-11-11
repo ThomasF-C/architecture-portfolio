@@ -130,74 +130,7 @@
       100% { transform: scale(1); opacity: 0.8; }
     }
 
-    /* --- SECTION VIDÉO --- */
-    .video-container {
-      position: absolute;
-      top: 70px;
-      left: 0;
-      width: 100%;
-      height: 88vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: black;
-      opacity: 0;
-      transition: opacity 1s ease;
-      z-index: 0;
-    }
-
-    .video-container.active {
-      opacity: 1;
-      z-index: 1;
-    }
-
-    .video-content {
-      position: relative;
-      width: 70%;
-      max-width: 1280px;
-      aspect-ratio: 16/9;
-    }
-
-    .video-content iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      border-radius: 12px;
-    }
-
-    .video-buttons {
-      position: absolute;
-      left: -220px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .video-buttons button {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .video-buttons button:hover {
-      background-color: rgba(255, 255, 255, 0.4);
-      color: black;
-      transform: scale(1.05);
-    }
-
-    .video-buttons button.active {
-      background-color: rgba(255, 255, 255, 0.7);
-      color: black;
-      font-weight: bold;
-    }
-
-    /* --- PROJECTION VIDÉO (image + iframe intégrée) --- */
+    /* --- PROJECTION VIDÉO (image + iframe intégrée + boutons) --- */
     .projection-container {
       position: absolute;
       top: 70px;
@@ -233,7 +166,7 @@
       display: block;
     }
 
-    .projection-wrapper .projection-iframe {
+    .projection-iframe {
       position: absolute;
       top: 22.65%;
       left: 18.2%;
@@ -245,11 +178,43 @@
       border-radius: 6px;
     }
 
+    .projection-buttons {
+      position: absolute;
+      left: -220px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .projection-buttons button {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .projection-buttons button:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+      color: black;
+      transform: scale(1.05);
+    }
+
+    .projection-buttons button.active {
+      background-color: rgba(255, 255, 255, 0.7);
+      color: black;
+      font-weight: bold;
+    }
+
     @media (max-width: 900px) {
       .projection-wrapper {
         width: 92%;
       }
-      .projection-wrapper .projection-iframe {
+      .projection-iframe {
         top: 20%;
         left: 6%;
         width: 88%;
@@ -270,7 +235,6 @@
   <!-- Menu principal -->
   <div class="menu">
     <button id="btnTop" class="active">Plan de travail</button>
-    <button id="btnVideo">Conflits à Turin : vidéos 3D</button>
     <button id="btnProjection">Projection vidéo</button>
     <button id="btnAtlas">Conflits à Turin : Atlas Mnémosyne</button>
     <button id="btnPhotos">Photographie en architecture</button>
@@ -279,23 +243,18 @@
   <!-- VIEWERS -->
   <div id="viewer1" class="viewer active"></div>
 
-  <div id="videoViewer" class="video-container">
-    <div class="video-content">
-      <div class="video-buttons">
+  <!-- PROJECTION VIDÉO -->
+  <div id="projectionViewer" class="projection-container">
+    <div class="projection-wrapper">
+      <div class="projection-buttons">
         <button data-video="S_6pEOad4qQ" class="active">Quartier Vallette</button>
         <button data-video="JgXFJDmfGGw">Quartier Pietra Alta</button>
         <button data-video="oKaR1QTc6m4">Quartier Falchera</button>
         <button data-video="LzwkDOWjYUo">Quartier Settimo Torinese</button>
       </div>
-      <iframe id="youtube-frame" src="https://www.youtube.com/embed/S_6pEOad4qQ" allowfullscreen></iframe>
-    </div>
-  </div>
-
-  <!-- SECTION PROJECTION VIDÉO corrigée -->
-  <div id="projectionViewer" class="projection-container">
-    <div class="projection-wrapper">
       <img src="Projection_video.jpg" alt="Projection vidéo">
       <iframe
+        id="projection-iframe"
         class="projection-iframe"
         src="https://www.youtube.com/embed/S_6pEOad4qQ"
         title="Projection vidéo - Quartier Vallette"
@@ -344,7 +303,6 @@
     // === NAVIGATION ===
     const buttons = {
       top: document.getElementById("btnTop"),
-      video: document.getElementById("btnVideo"),
       projection: document.getElementById("btnProjection"),
       atlas: document.getElementById("btnAtlas"),
       photos: document.getElementById("btnPhotos")
@@ -352,7 +310,6 @@
 
     const viewers = {
       top: document.getElementById("viewer1"),
-      video: document.getElementById("videoViewer"),
       projection: document.getElementById("projectionViewer"),
       atlas: document.getElementById("viewerAtlas"),
       photos: document.getElementById("viewerPhotos")
@@ -366,21 +323,20 @@
     }
 
     buttons.top.addEventListener("click", () => showViewer("top"));
-    buttons.video.addEventListener("click", () => showViewer("video"));
     buttons.projection.addEventListener("click", () => showViewer("projection"));
     buttons.atlas.addEventListener("click", () => showViewer("atlas"));
     buttons.photos.addEventListener("click", () => showViewer("photos"));
 
-    // === VIDÉOS ===
-    const iframe = document.getElementById("youtube-frame");
-    const videoButtons = document.querySelectorAll(".video-buttons button");
+    // === VIDÉOS (Projection) ===
+    const projIframe = document.getElementById("projection-iframe");
+    const projButtons = document.querySelectorAll(".projection-buttons button");
 
-    videoButtons.forEach(btn => {
+    projButtons.forEach(btn => {
       btn.addEventListener("click", () => {
-        videoButtons.forEach(b => b.classList.remove("active"));
+        projButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         const videoId = btn.getAttribute("data-video");
-        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        projIframe.src = `https://www.youtube.com/embed/${videoId}`;
       });
     });
 
