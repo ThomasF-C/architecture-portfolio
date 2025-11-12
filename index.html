@@ -41,6 +41,30 @@
     }
     .viewer.active { opacity: 1; z-index: 1; }
 
+    /* =========================== OVERLAYS =========================== */
+    .hover-zone {
+      position: absolute;
+      background-color: rgba(0,0,0,0);
+      z-index: 5;
+    }
+
+    .hover-label {
+      position: absolute;
+      background-color: rgba(0,0,0,0.7);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      white-space: nowrap;
+    }
+
+    .hover-zone:hover + .hover-label {
+      opacity: 1;
+    }
+
     /* =========================== MENU =========================== */
     .menu {
       position: fixed;
@@ -227,7 +251,16 @@
     <button id="btnPhotos">Photographie en architecture</button>
   </div>
 
-  <div id="viewer1" class="viewer active"></div>
+  <!-- ========= VIEWER AVEC SURVOL ========= -->
+  <div id="viewer1" class="viewer active">
+    <!-- Zones de survol positionnées manuellement -->
+    <div class="hover-zone" style="top:30%; left:25%; width:10%; height:10%;"></div>
+    <div class="hover-label" style="top:28%; left:36%;">Projet A — logements modulaires</div>
+
+    <div class="hover-zone" style="top:55%; left:55%; width:10%; height:10%;"></div>
+    <div class="hover-label" style="top:53%; left:66%;">Projet B — centre communautaire</div>
+  </div>
+
   <div id="viewerAtlas" class="viewer"></div>
   <div id="viewerPhotos" class="viewer"></div>
 
@@ -326,7 +359,7 @@
       setTimeout(() => loadingScreen.classList.add("fade-out"), 800);
     });
 
-    /* ================== Pop-up mobile (plus robuste) ================== */
+    /* ================== Pop-up mobile ================== */
     function detectMobile() {
       return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 900;
     }
@@ -337,10 +370,7 @@
         popup.classList.remove("visible");
       });
     }
-    // Vérifie au démarrage ET après un court délai (pour Safari)
-    if (detectMobile()) {
-      setTimeout(showMobilePopup, 500);
-    }
+    if (detectMobile()) setTimeout(showMobilePopup, 500);
   </script>
 </body>
 </html>
